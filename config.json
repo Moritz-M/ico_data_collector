@@ -1,0 +1,7 @@
+{
+    "ICObench" : {
+        "apiUrl" : "https://icobench.com/api/v1/",
+        "privateKey" : "",
+        "publicKey" : ""
+    }
+}
