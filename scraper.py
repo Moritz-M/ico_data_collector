@@ -101,10 +101,10 @@ class ICObench:
             for row in ico_list:
                 ist_id_list.append(row[0])
 
-        print('soll: ', len(soll_id_list), '     ist: ', len(ist_id_list))
+        #print('soll: ', len(soll_id_list), '     ist: ', len(ist_id_list))
 
         if(len(soll_id_list) == len(ist_id_list)):
-            print('integrity checked, all icos scraped')
+            print('\n\nintegrity checked, all', len(ist_id_list),'icos scraped')
             output_json = {}
             with open('output_check.json', 'r') as f:
                 output_json = json.load(f)
@@ -190,11 +190,12 @@ def main():
         ib.get_all_ids()
         shutil.copyfile('./id_list.txt', './id_list_queue.txt')
         ib.change_status_to_unfinished()
-
         ib.get_icos_from_id_list()
+        ib.check_completeness()
     else:
         print("\n\nPrevious run was NOT complete. Continuing last search! \n If you do not wish to continue last search, change -status- in output_check.json to -complete- ")
         ib.get_icos_from_id_list()
+        ib.check_completeness()
 
 if __name__ == "__main__":
     main()
