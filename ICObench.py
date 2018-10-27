@@ -101,10 +101,10 @@ class ICObench:
             for row in ico_list:
                 ist_id_list.append(row[0])
 
-        #print('soll: ', len(soll_id_list), '     ist: ', len(ist_id_list))
+        print('soll: ', len(soll_id_list), '     ist: ', len(ist_id_list)-1)
 
-        if(len(soll_id_list) == len(ist_id_list)):
-            print('\n\nintegrity checked, all', len(ist_id_list),'icos scraped')
+        if(len(soll_id_list) == len(ist_id_list)-1):
+            print('\n\nIntegrity checked, all', len(ist_id_list),'icos scraped')
             output_json = {}
             with open('output_check.json', 'r') as f:
                 output_json = json.load(f)
@@ -117,6 +117,7 @@ class ICObench:
             os.rename('ICObench_icos.csv', 'ICObench_icos_'+str(datetime.date.today())+'.csv')
 
         else:
+
             soll_set = set(soll_id_list)
             ist_set = set(ist_id_list)
 
@@ -157,6 +158,17 @@ class ICObench:
             else:
                 return True
 
+    def add_titles_to_csv(self):
+        key_list = []
+        with open('id_list.txt', 'r') as id_list_file:
+            ico_id = id_list_file.read().splitlines()[0]
+            ico_details = self.get_ico_by_id(ico_id)
+            key_list = dict(ico_details).keys()
+
+            with open('ICObench_icos.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(key_list)
+
     def change_status_to_unfinished(self):
         output = {}
         with open('output_check.json', 'r') as f:
@@ -180,22 +192,26 @@ class ICObench:
             pass
         with open('./ICObench_icos.csv', 'w'):
             pass
+
+    def get_csv(self):
+        if(self.check_previous_completeness()):
+            print("\n\nPrevious run was complete. Starting a new search!\n")
+            self.setup_clean_files()
+            self.get_all_ids()
+            shutil.copyfile('./id_list.txt', './id_list_queue.txt')
+            self.change_status_to_unfinished()
+            self.add_titles_to_csv()
+            self.get_icos_from_id_list()
+            self.check_completeness()
+        else:
+            print("\n\nPrevious run was NOT complete. Continuing last search! \nIf you do not wish to continue last search, change -status- in output_check.json to -complete-\n ")
+            self.get_icos_from_id_list()
+            self.check_completeness()
+
         
 def main():
-    ib = ICObench()
-
-    if(ib.check_previous_completeness()):
-        print("\n\nPrevious run was complete. Starting a new search!\n")
-        ib.setup_clean_files()
-        ib.get_all_ids()
-        shutil.copyfile('./id_list.txt', './id_list_queue.txt')
-        ib.change_status_to_unfinished()
-        ib.get_icos_from_id_list()
-        ib.check_completeness()
-    else:
-        print("\n\nPrevious run was NOT complete. Continuing last search! \n If you do not wish to continue last search, change -status- in output_check.json to -complete- ")
-        ib.get_icos_from_id_list()
-        ib.check_completeness()
+    ico_bench = ICObench()
+    ico_bench.get_csv()
 
 if __name__ == "__main__":
     main()

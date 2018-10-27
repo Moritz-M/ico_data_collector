@@ -1,7 +1,12 @@
 {
     "ICObench" : {
-        "apiUrl" : "https://icobench.com/api/v1/",
+        "apiUrl" : "",
         "privateKey" : "",
         "publicKey" : ""
+    },
+    "CoinMarketCap" : {
+        "apiUrl" : "",
+        "privateKey" : "",
+        "max_requests" : 0
     }
 }
